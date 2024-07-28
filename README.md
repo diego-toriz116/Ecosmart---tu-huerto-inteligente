@@ -36,9 +36,37 @@ Ecosmart - Tu Huerto Inteligente es un sistema que está diseñado con una visi�
 ### Software
 - [Raspberry Pi OS](https://www.raspberrypi.com/software/)
 - [Node-Red](https://nodered.org/)
-- [Arduino IDE](https://www.ceac.es/blog/que-es-el-ide-de-arduino-en-robotica)
+- [Arduino IDE 1.8.18](https://www.ceac.es/blog/que-es-el-ide-de-arduino-en-robotica)
   
 ## Dependencias de código
+### Dependencias de Arduino
+**ESP32**
+Abre Aruino IDE -> Ve a 'Archivo' -> Preferencias.
+
+Busca el campo 'Gestor de URLs Adicionales de Tarjetas' y añade la siguiente URL: https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json. Haz clic en OK para guardar y cerrar las Preferencias.
+
+Ve a 'Herramientas' -> Placa -> 'Gestor de Placas'. Escribe 'esp32' en el cuadro de búsqueda. Busca el paquete 'esp32' de 'Espressif Systems' y haz clic en Instalar.
+
+Ve a 'Herramientas' -> 'Placa' y selecciona 'ESP32 Dev Module'.
+
+Conecta la esp32 por vía USB a la Raspberry. Ve a 'Herramientas' -> 'Puerto' y selecciona el puerto al que está conectada la ESP32.
+
+**Librerias**
+
+Ve a 'Programa' -> 'Incluir Librería' -> 'Gestionar Librerías'. Escribe 'WiFi' y busca la biblioteca 'WiFi' de 'Espressif Systems' y luego da click en 'Instalar'.
+
+Repite los mismos pasos con la librería 'DHT sensor library'.
+
+### Dependencias de Node-red
+
+Inicia node-red en una terminal con el comando node-red. Abre tu navegador web y ve a http://<tu_IP>:1880 o http://localhost:1880.
+
+Haz clic en el menú en la esquina superior derecha (tres líneas horizontales) y selecciona 'Manage palette'. 
+
+En la pestaña 'Install', busca 'node-red-dashboard' y haz click en el boton 'install'.
+
+Repite los mismos pasos e instala 'node-red-contrib-string'.
+
 
 ## Guía de implementación
 
