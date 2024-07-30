@@ -84,7 +84,8 @@ Repite los mismos pasos e instala 'node-red-contrib-string'.
 6. Abre una terminal y escribe el comando  ```node-red```, a continuación, en tu navegador escribe http://<tu_IP>:1880 o http://localhost:1880, haz clic en el menú en la esquina superior derecha (tres líneas horizontales) y selecciona la opción "Import", da clic en "select a file to import" y elige el archivo llamado "codigo-ecosmart-node-red.json", da clic en "Import" y selecciona el botón de "Deploy".
 7. Abre una nueva pestaña con la direccion http://<tu_IP>:1880/ui o http://localhost:1880/ui.
 8. Haz llegado al final, puedes amodar tus sensores y actuadores como te sea más util, adememas de conectar el circuito a una fuente de 5V (no es necesario que se mantenga conectada a la Raspberry Pi).
-
+   
+**Nota:** Si no funciona algún componente electrónico, dirígete a la carpeta de "Codigos-Ejemplos", en ella podrás encontrar los códigos individuales de los componente y asi verificar su funcionamiento.
 ## Resultado Final
 
 
