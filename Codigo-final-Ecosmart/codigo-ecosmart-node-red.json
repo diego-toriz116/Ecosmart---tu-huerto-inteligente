@@ -1,5 +1,13 @@
 [
     {
+        "id": "d76a4b24a1e56863",
+        "type": "tab",
+        "label": "Flow 2",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
         "id": "0a7efb6bb6693df5",
         "type": "function",
         "z": "d76a4b24a1e56863",
@@ -520,6 +528,91 @@
         "wires": []
     },
     {
+        "id": "02ebf7fb8514e66d",
+        "type": "mqtt out",
+        "z": "d76a4b24a1e56863",
+        "name": "",
+        "topic": "codigoIoT/mor/huerto/maxHum",
+        "qos": "2",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "01c24b75a81888e0",
+        "x": 810,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "dbdd10ba7c3331f3",
+        "type": "mqtt in",
+        "z": "d76a4b24a1e56863",
+        "name": "",
+        "topic": "codigoIoT/mor/huerto/maxHum",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "01c24b75a81888e0",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 490,
+        "y": 780,
+        "wires": [
+            [
+                "b26b774729be7d88"
+            ]
+        ]
+    },
+    {
+        "id": "b26b774729be7d88",
+        "type": "ui_text",
+        "z": "d76a4b24a1e56863",
+        "group": "bde1d7eb191c378c",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Humedad minima ingresada",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 860,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "72535b1b1c5d1e7e",
+        "type": "ui_text_input",
+        "z": "d76a4b24a1e56863",
+        "name": "",
+        "label": "Humedad mínima",
+        "tooltip": "",
+        "group": "bde1d7eb191c378c",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 510,
+        "y": 640,
+        "wires": [
+            [
+                "02ebf7fb8514e66d"
+            ]
+        ]
+    },
+    {
         "id": "208be2acbe73eb51",
         "type": "ui_group",
         "name": "Indicadores",
@@ -584,9 +677,20 @@
         "className": ""
     },
     {
+        "id": "bde1d7eb191c378c",
+        "type": "ui_group",
+        "name": "Intervalos",
+        "tab": "a7baf48fa557e75d",
+        "order": 4,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
         "id": "a7baf48fa557e75d",
         "type": "ui_tab",
-        "name": "Jardìn Hidropónico",
+        "name": "Ecosmart - tu huerto inteligente",
         "icon": "dashboard",
         "order": 6,
         "disabled": false,
