@@ -1,4 +1,4 @@
-/*
+*
 Ecosmart - tu huerto inteligente
 Fecha: 20240729
 
@@ -39,6 +39,7 @@ Transistor   Ventilador
 Base------GND
 
 */
+
 // Bibliotecas
 #define HUMIDITY_SENSOR 33 // Sensor de humedad en el pin GPIO2
 #define WATER_LEVEL 35 // Sensor de nivel de agua en el pin GPIO14
@@ -69,7 +70,7 @@ char msg[MSG_BUFFER_SIZE]; // Variable para conversion de mensaje
 // Variables para el manejo de tiempo
 double timeLast, timeNow; // Variables para el control de tiempo no bloqueante
 long lastReconnectAttempt = 0; // Variable para el conteo de tiempo entre intentos de reconexion
-double WAIT_MSG = 3000;  // Espera de 1 segundo entre mensajes
+double WAIT_MSG = 5000;  // Espera de 1 segundo entre mensajes
 double RECONNECT_WAIT = 5000; // Espera de 5 segundos entre conexiones
 int threshold = 340; // Ajusta este valor segun tus pruebas
 
@@ -82,6 +83,7 @@ const char* mqttsensores = "codigoIoT/mor/huerto/sensores";
 WiFiClient espClient; // Objeto para conexion a WiFi
 PubSubClient client(espClient); // Objeto para conexion a MQTT
 DHT dht(DHTPIN, DHTTYPE); // Objeto que inicia el sensor
+int maxHum = 70;
 
 // Funcion para conectarse a WiFi
 void setup_wifi() {
@@ -124,7 +126,9 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.println();
   Serial.print ("Mensaje concatenado en una sola variable: ");
   Serial.println (messageTemp);
-  
+  if (String(topic) == "codigoIoT/mor/huerto/maxHum") {
+    maxHum = messageTemp.toInt();
+  }
 }
 
 // Funcion de recomexion. Devuelve valor booleano para indicar exito o falla
@@ -139,14 +143,15 @@ boolean reconnect() {
     client.publish(mqttMsg,"Conectado");
     // Funcion de suscripcion
     client.subscribe(mqttCallback);
+    client.subscribe("codigoIoT/mor/huerto/maxHum");
   } 
   else {
       // En caso de error
       Serial.print("Error rc=");
       Serial.print(client.state());
       Serial.println(" Intentando de nuevo");
-      // Esperar 1 segundo
-      delay(1000);
+      // Esperar 5 segundos
+      delay(5000);
     }
   return client.connected();
 }
@@ -155,7 +160,6 @@ volatile int flowCounter; // Este entero volatil almacena el numero de pulsos de
 float flowRate = 0; // Inicializa el flujo de agua
 unsigned long oldTime;
 unsigned long msgTime;
-int pumpCommand; // Variable para controlar la activacion de la bomba de agua
 
 // Esta es la funcion de interrupcion que se activa cada vez que el sensor de flujo envia un pulso.
 void IRAM_ATTR pulseCounter() {
@@ -166,6 +170,7 @@ void IRAM_ATTR pulseCounter() {
 void setup() {
   // Inician las comunicaciones
 Serial.begin(115200); // Inicia la comunicacion serial a 115200 bps
+ dht.begin(); // Funcion que inicia el sensor
   pinMode(HUMIDITY_SENSOR, INPUT);
   pinMode(WATER_LEVEL, INPUT);
   pinMode(FLOW_SENSOR, INPUT_PULLUP); // Configura el pin del sensor de flujo como entrada
@@ -174,14 +179,11 @@ Serial.begin(115200); // Inicia la comunicacion serial a 115200 bps
   pinMode(LED, OUTPUT);
 
   attachInterrupt(digitalPinToInterrupt(FLOW_SENSOR), pulseCounter, RISING);  // Asocia la funcion de interrupcion pulseCounter al pin del sensor de flujo
-
-
+  
   //Conef  
   setup_wifi();
   client.setServer(mqtt_server,1883);
   client.setCallback(callback);
-
-  dht.begin(); // Funcion que inicia el sensor
 
   // Iniciar secuencias de tiempo
   timeLast = millis (); // Inicia el control de tiempo
@@ -219,6 +221,7 @@ void loop() {
     client.publish("codigoIoT/mor/huerto/luz", "Luz artificial activada");
   } else {
     digitalWrite(LED, LOW);
+    client.publish("codigoIoT/mor/huerto/luz"," ");
   }
 
 
@@ -245,27 +248,34 @@ void loop() {
 
 humiditySensor = (humiditySensor*100)/4095;
 waterLevel = (waterLevel*100)/4095;
-if ( t > 26 ){
+
+if (t > 27){
    // Encender el ventilador
   digitalWrite(VENTILADOR, HIGH);
    client.publish("codigoIoT/mor/huerto/ventilador", "Ventilador activado");
   }
   else {
   digitalWrite(VENTILADOR, LOW);
+  client.publish("codigoIoT/mor/huerto/ventilador", " ");
+  
   }
-if ( humiditySensor < 70 && waterLevel > 10) {
+if ( humiditySensor < maxHum && waterLevel > 10) {
      client.publish("codigoIoT/mor/huerto/bomba", "Bomba de agua activada");
     digitalWrite(WATER_PUMP, HIGH); // Activa la bomba de agua
     delay(5000);
     digitalWrite(WATER_PUMP, LOW);
  } 
   else {
-    Serial.println("bomba desactivada\n");
+    client.publish("codigoIoT/mor/huerto/bomba", " ");
     digitalWrite(WATER_PUMP, LOW); // Desactiva la bomba de agua
   }
   if ( waterLevel < 10 ){
   client.publish("codigoIoT/mor/huerto/tanque", "Llenar tanque de agua");
   }
+
+  else{
+      client.publish("codigoIoT/mor/huerto/tanque", " ");
+    }
     //Se construye el string correspondiente al JSON que contiene 3 variables
     String json = "{\"humtierra\":" + String(humiditySensor) + ",\"nivagua\":" + String(waterLevel) + ",\"flujoagua\":" + String(flowRate) + ",\"temp\":" + String(t) + ",\"hum\":" + String(h) + "}";
     Serial.println(json); // Se imprime en monitor solo para poder visualizar que el string esta correctamente creado
