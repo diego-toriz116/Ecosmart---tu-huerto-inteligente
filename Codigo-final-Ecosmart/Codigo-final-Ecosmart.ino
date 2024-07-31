@@ -1,4 +1,4 @@
-*
+/*
 Ecosmart - tu huerto inteligente
 Fecha: 20240729
 
